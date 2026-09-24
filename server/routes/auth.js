@@ -28,24 +28,21 @@ router.post('/signup', async (req, res) => {
     email,
     password: hashedPassword,
   });
+
+  const token = jwt.sign(
+    { userId: user._id },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+
+  return res.status(201).json({
+    message: 'User created successfully',
+    token,
+    user: {
+      id: user._id,
+      email: user.email,
+    },
+  });
 });
 
 module.exports = router;
-const user = await User.create({
-  email,
-  password: hashedPassword,
-});
-const token = jwt.sign(
-  { userId: user._id },
-  process.env.JWT_SECRET,
-  { expiresIn: '7d' }
-);
-
-return res.status(201).json({
-  message: 'User created successfully',
-  token,
-  user: {
-    id: user._id,
-    email: user.email,
-  },
-});
